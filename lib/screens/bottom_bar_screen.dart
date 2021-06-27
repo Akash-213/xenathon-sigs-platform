@@ -39,7 +39,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       ExploreTab(),
       ScheduleTab(),
     ];
-    _selectedIndex = 1;
+    _selectedIndex = 2;
   }
 
   @override
@@ -51,7 +51,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: Icon(Icons.logout, color: Colors.white),
             onPressed: () async {
               Provider.of<GoogleSignInProvider>(context, listen: false)
                   .googleLogout();

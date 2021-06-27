@@ -15,20 +15,27 @@ class _ProfileTabState extends State<ProfileTab> {
     return Container(
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(height: 20),
             CircleAvatar(
-              radius: 50,
+              radius: 60,
               backgroundImage: NetworkImage(currUser.photoURL ?? ''),
             ),
+            SizedBox(height: 30),
             Text(
               currUser.displayName ?? 'DisplayName',
               style: TextStyle(fontSize: 30),
             ),
+            SizedBox(height: 30),
             Text(
               currUser.email ?? 'Email',
               style: TextStyle(fontSize: 20),
             ),
+            SizedBox(height: 30),
+            Container(
+              child: Text('More Sections Coming Up Soon'),
+            )
           ],
         ),
       ),

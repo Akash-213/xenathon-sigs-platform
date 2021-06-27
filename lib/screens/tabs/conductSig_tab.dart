@@ -326,6 +326,7 @@ class _ConductSigTabState extends State<ConductSigTab> {
               print(sigDateTime);
               await FirebaseFirestore.instance.collection('sigs').add({
                 'sigBy': FirebaseAuth.instance.currentUser!.uid,
+                'sigByName': FirebaseAuth.instance.currentUser!.displayName,
                 'sigTitle': sigTitle,
                 'sigDesc': sigDesc,
                 'topics': topics,
@@ -333,7 +334,7 @@ class _ConductSigTabState extends State<ConductSigTab> {
                 'sigDateTime': sigDateTime,
                 'sigCount': sigCount,
                 'sigLink': sigLink,
-                'isConfirmed': true,
+                'isConfirmed': false,
                 'interestedCount': 0,
               });
 

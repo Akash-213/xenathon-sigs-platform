@@ -27,9 +27,12 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'SIGs',
         theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.amber,
-        ),
+            primarySwatch: Colors.purple,
+            accentColor: Colors.amber,
+            fontFamily: 'Raleway',
+            iconTheme: IconTheme.of(context).copyWith(
+              color: Colors.white,
+            )),
         home: InitialScreen(),
       ),
     );

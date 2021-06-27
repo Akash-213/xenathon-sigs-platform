@@ -24,8 +24,12 @@ class _IntroAuthScreenState extends State<IntroAuthScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('SIGs Platform'),
-            SizedBox(height: 20),
+            Center(
+                child: Text(
+              'SIGs Platform',
+              style: TextStyle(fontSize: 30),
+            )),
+            SizedBox(height: 50),
             ElevatedButton(
               child: Text('Google Sign In'),
               onPressed: () async {
