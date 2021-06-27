@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 //packages
@@ -8,12 +6,12 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 //providers
 import 'package:provider/provider.dart';
 import 'package:sig_platform/providers/google_auth_provider.dart';
-import 'package:sig_platform/widgets/loading_widget.dart';
 
 // tabs
-import './tabs/tab1.dart';
-import './tabs/tab2.dart';
-import './tabs/tab3.dart';
+import 'tabs/conductSig_tab.dart';
+import 'tabs/schedule_tab.dart';
+import 'tabs/explore_tab.dart';
+import 'tabs/profile_tab.dart';
 
 //widgets
 class BottomBarScreen extends StatefulWidget {
@@ -33,8 +31,13 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   @override
   void initState() {
     super.initState();
-    _tabNames = ['Schedule', 'Explore SIG', 'Conduct SIG'];
-    _tabs = [Tab1(), Tab2(), Tab3()];
+    _tabNames = ['Profile', 'Conduct SIG', 'Explore SIG', 'Schedule'];
+    _tabs = [
+      ProfileTab(),
+      ConductSigTab(),
+      ExploreTab(),
+      ScheduleTab(),
+    ];
     _selectedIndex = 2;
   }
 
@@ -46,17 +49,6 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         title: Text(_tabNames[_selectedIndex]),
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => (),
-              //   ),
-              // );
-            },
-          ),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {
@@ -79,8 +71,15 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         curve: Curves.easeInCirc,
         items: [
           BottomNavyBarItem(
-            title: Text('Schedule'),
-            icon: Icon(Icons.schedule),
+            title: Text('Profile'),
+            icon: Icon(Icons.person),
+            textAlign: TextAlign.center,
+            activeColor: Colors.purple[400]!,
+            inactiveColor: Colors.black54,
+          ),
+          BottomNavyBarItem(
+            title: Text('Conduct SIG'),
+            icon: Icon(Icons.create_new_folder),
             textAlign: TextAlign.center,
             activeColor: Colors.purple[400]!,
             inactiveColor: Colors.black54,
@@ -93,8 +92,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             inactiveColor: Colors.black54,
           ),
           BottomNavyBarItem(
-            title: Text('Conduct SIG'),
-            icon: Icon(Icons.add_box_outlined),
+            title: Text('Schedule'),
+            icon: Icon(Icons.calendar_today),
             textAlign: TextAlign.center,
             activeColor: Colors.purple[400]!,
             inactiveColor: Colors.black54,

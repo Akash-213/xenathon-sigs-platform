@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Tab1 extends StatefulWidget {
-  const Tab1({Key? key}) : super(key: key);
+class ScheduleTab extends StatefulWidget {
+  const ScheduleTab({Key? key}) : super(key: key);
 
   @override
-  _Tab1State createState() => _Tab1State();
+  _ScheduleTabState createState() => _ScheduleTabState();
 }
 
-class _Tab1State extends State<Tab1> {
+class _ScheduleTabState extends State<ScheduleTab> {
   @override
   Widget build(BuildContext context) {
     final currUser = FirebaseAuth.instance.currentUser!;
