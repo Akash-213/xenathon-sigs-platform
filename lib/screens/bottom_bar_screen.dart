@@ -6,6 +6,7 @@ import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 //providers
 import 'package:provider/provider.dart';
 import 'package:sig_platform/providers/google_auth_provider.dart';
+import 'package:sig_platform/widgets/app_drawer.dart';
 
 // tabs
 import 'tabs/conductSig_tab.dart';
@@ -58,7 +59,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           ),
         ],
       ),
-      // drawer: AppDrawer(),
+      drawer: AppDrawer(),
       body: _tabs[_selectedIndex],
       bottomNavigationBar: BottomNavyBar(
         selectedIndex: _selectedIndex,
