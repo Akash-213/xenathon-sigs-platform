@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ConductSigTab extends StatefulWidget {
   const ConductSigTab({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _ConductSigTabState extends State<ConductSigTab> {
   String sigTitle = '';
   String sigDesc = '';
   String topics = '';
-  String proficiency = '';
+  String proficiency = 'Basic';
   String sigLink = '';
   int sigCount = 0;
 
@@ -64,6 +65,8 @@ class _ConductSigTabState extends State<ConductSigTab> {
                   const SizedBox(height: 10),
                   buildDesc(),
                   const SizedBox(height: 10),
+                  buildProficiency(),
+                  const SizedBox(height: 10),
                   buildTopics(),
                   const SizedBox(height: 10),
                   buildCount(),
@@ -74,7 +77,13 @@ class _ConductSigTabState extends State<ConductSigTab> {
                   const SizedBox(height: 10),
                   buildLink(),
                   const SizedBox(height: 10),
-                  buildSubmitButton(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      buildResetButton(),
+                      buildSubmitButton(),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -141,20 +150,21 @@ class _ConductSigTabState extends State<ConductSigTab> {
       );
 
   Widget buildLink() => TextFormField(
-        decoration: InputDecoration(
-          labelText: 'SIG Platform Link',
-          border: OutlineInputBorder(),
-        ),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (value) {
-          if (value!.length < 4) {
-            return 'Enter at least 4 characters';
-          } else {
-            return null;
-          }
-        },
-        onSaved: (value) => setState(() => sigLink = value!),
-      );
+      decoration: InputDecoration(
+        labelText: 'SIG Platform Link',
+        border: OutlineInputBorder(),
+      ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) {
+        if (value == null) {
+          return 'Enter at least 4 characters';
+        } else {
+          return null;
+        }
+      },
+      onSaved: (value) async {
+        setState(() => sigLink = value!);
+      });
 
   Widget buildDate() => Container(
         padding: const EdgeInsets.all(10),
@@ -177,10 +187,47 @@ class _ConductSigTabState extends State<ConductSigTab> {
                 );
 
                 if (newDate == null) return;
-                if (newDate.isAfter(DateTime.now())) return;
+                if (newDate.isBefore(DateTime.now())) return;
 
                 setState(() => date = newDate);
               },
+            ),
+          ],
+        ),
+      );
+
+  Widget buildProficiency() => Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Your Proficiency'),
+            Container(
+              padding: const EdgeInsets.all(0.0),
+              child: DropdownButton<String>(
+                value: proficiency,
+                //elevation: 5,
+                style: TextStyle(color: Colors.black),
+
+                items: <String>['Advanced', 'Intermediate', 'Basic']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value == null) {
+                    proficiency = 'Basic';
+                  }
+                  setState(() {
+                    proficiency = value!;
+                  });
+                },
+              ),
             ),
           ],
         ),
@@ -205,7 +252,6 @@ class _ConductSigTabState extends State<ConductSigTab> {
                   );
 
                   if (newTime == null) return;
-
                   setState(() => time = newTime);
                 }),
           ],
@@ -217,7 +263,6 @@ class _ConductSigTabState extends State<ConductSigTab> {
           labelText: 'Expected Count',
           border: OutlineInputBorder(),
         ),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == '') {
@@ -233,6 +278,15 @@ class _ConductSigTabState extends State<ConductSigTab> {
         onSaved: (value) => setState(() => sigCount = int.parse(value!)),
       );
 
+  Widget buildResetButton() => Builder(
+        builder: (context) => ElevatedButton(
+          child: Text('Reset'),
+          onPressed: () {
+            formKey.currentState!.reset();
+          },
+        ),
+      );
+
   Widget buildSubmitButton() => Builder(
         builder: (context) => ElevatedButton(
           child: Text('Submit'),
@@ -242,6 +296,24 @@ class _ConductSigTabState extends State<ConductSigTab> {
 
             if (isValid) {
               formKey.currentState!.save();
+
+              // if (date!.isBefore(DateTime.now())) {
+              //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //     duration: Duration(milliseconds: 500),
+              //     content: Text('Enter a Valid Date'),
+              //   ));
+              //   return;
+              // }
+
+              if (!await canLaunch(sigLink)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    duration: Duration(milliseconds: 500),
+                    content: Text('Enter a Valid Link'),
+                  ),
+                );
+                return;
+              }
 
               sigDateTime = new DateTime(
                 date!.year,
@@ -264,6 +336,12 @@ class _ConductSigTabState extends State<ConductSigTab> {
                 'isConfirmed': true,
                 'interestedCount': 0,
               });
+
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                duration: Duration(milliseconds: 500),
+                content: Text('Form Submitted'),
+              ));
+
               setState(() {
                 date = null;
                 time = null;

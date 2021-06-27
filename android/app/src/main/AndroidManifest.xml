@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.sig_platform">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="sig_platform"
         android:icon="@mipmap/ic_launcher">
