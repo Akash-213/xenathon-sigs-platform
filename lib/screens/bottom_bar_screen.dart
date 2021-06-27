@@ -39,7 +39,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       ExploreTab(),
       ScheduleTab(),
     ];
-    _selectedIndex = 2;
+    _selectedIndex = 1;
   }
 
   @override
