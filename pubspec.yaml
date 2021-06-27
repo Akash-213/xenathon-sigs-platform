@@ -40,6 +40,9 @@ dependencies:
   #URL laucher
   url_launcher: ^6.0.6
 
+  #DateTime
+  intl: ^0.17.0
+
   #bottom-Navigation-Bar
   bottom_navy_bar: ^6.0.0
 

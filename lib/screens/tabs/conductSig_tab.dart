@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ConductSigTab extends StatefulWidget {
   const ConductSigTab({Key? key}) : super(key: key);
@@ -14,11 +15,34 @@ class _ConductSigTabState extends State<ConductSigTab> {
 
   String sigTitle = '';
   String sigDesc = '';
-  String sigDate = '';
   String topics = '';
   String proficiency = '';
   String sigLink = '';
   int sigCount = 0;
+
+  DateTime? sigDateTime;
+  DateTime? date;
+  TimeOfDay? time;
+
+  String getTimeText() {
+    if (time == null) {
+      return 'Select Time';
+    } else {
+      final hours = time!.hour.toString().padLeft(2, '0');
+      final minutes = time!.minute.toString().padLeft(2, '0');
+
+      return '$hours:$minutes';
+    }
+  }
+
+  String getDateText() {
+    if (date == null) {
+      return 'Select Date';
+    } else {
+      return DateFormat('dd/MM/yyyy').format(date!);
+      // return '${date.month}/${date.day}/${date.year}';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,36 +156,60 @@ class _ConductSigTabState extends State<ConductSigTab> {
         onSaved: (value) => setState(() => sigLink = value!),
       );
 
-  Widget buildDate() => TextFormField(
-        decoration: InputDecoration(
-          labelText: 'SIG Date',
-          border: OutlineInputBorder(),
+  Widget buildDate() => Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(),
         ),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (value) {
-          if (value!.length == 0) {
-            return 'Date Cant Be Empty';
-          } else {
-            return null;
-          }
-        },
-        onSaved: (value) => setState(() => sigDate = value!),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('SIG Date'),
+            TextButton(
+              child: Text(getDateText()),
+              onPressed: () async {
+                final initialDate = DateTime.now();
+                final newDate = await showDatePicker(
+                  context: context,
+                  initialDate: date ?? initialDate,
+                  firstDate: DateTime(DateTime.now().year - 1),
+                  lastDate: DateTime(DateTime.now().year + 1),
+                );
+
+                if (newDate == null) return;
+                if (newDate.isAfter(DateTime.now())) return;
+
+                setState(() => date = newDate);
+              },
+            ),
+          ],
+        ),
       );
 
-  Widget buildTime() => TextFormField(
-        decoration: InputDecoration(
-          labelText: 'SIG Time',
-          border: OutlineInputBorder(),
+  Widget buildTime() => Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(),
         ),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (value) {
-          if (value!.length == 0) {
-            return 'Date Cant Be Empty';
-          } else {
-            return null;
-          }
-        },
-        onSaved: (value) => setState(() => sigDate = value!),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('SIG Time'),
+            TextButton(
+                child: Text(getTimeText()),
+                onPressed: () async {
+                  final initialTime = TimeOfDay(hour: 16, minute: 0);
+                  final newTime = await showTimePicker(
+                    context: context,
+                    initialTime: time ?? initialTime,
+                  );
+
+                  if (newTime == null) return;
+
+                  setState(() => time = newTime);
+                }),
+          ],
+        ),
       );
 
   Widget buildCount() => TextFormField(
@@ -195,20 +243,31 @@ class _ConductSigTabState extends State<ConductSigTab> {
             if (isValid) {
               formKey.currentState!.save();
 
+              sigDateTime = new DateTime(
+                date!.year,
+                date!.month,
+                date!.day,
+                time!.hour,
+                time!.minute,
+              );
+
+              print(sigDateTime);
               await FirebaseFirestore.instance.collection('sigs').add({
                 'sigBy': FirebaseAuth.instance.currentUser!.uid,
                 'sigTitle': sigTitle,
                 'sigDesc': sigDesc,
                 'topics': topics,
                 'proficiency': proficiency,
-                'sigDate': DateTime.now(),
-                'sigTime': DateTime.now(),
+                'sigDateTime': sigDateTime,
                 'sigCount': sigCount,
                 'sigLink': sigLink,
                 'isConfirmed': true,
                 'interestedCount': 0,
               });
-
+              setState(() {
+                date = null;
+                time = null;
+              });
               formKey.currentState!.reset();
             }
           },
